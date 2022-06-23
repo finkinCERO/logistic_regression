@@ -20,6 +20,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.linear_model import LogisticRegression
 import plotly.express as px
 
+import pickle
 
 def write_log(msg, prefix="process"):
     f = open("log/data.log", "a+")
@@ -31,7 +32,7 @@ def write_log(msg, prefix="process"):
 #print("hello world! Im learning about you!")
 #pd.set_option('display.max_columns', None)
 #pd.set_option('display.max_rows', None)
-data_csv = pd.read_csv('data/heart_2020.csv')
+data_csv = pd.read_csv('data/heart_2020_final.csv')
 data_csv.info()
 
 le = LabelEncoder()
@@ -39,19 +40,19 @@ col = data_csv[['HeartDisease', 'Smoking', 'AlcoholDrinking', 'AgeCategory', 'St
                 'Race', 'Sex', 'Asthma', 'KidneyDisease', 'SkinCancer', 'Diabetic']]
 write_log("\n"+str(data_csv.head()))
 
-for i in col:
+""" for i in col:
     data_csv[i] = le.fit_transform(data_csv[i])
 write_log("\n"+str(data_csv.head()))
 
 num_cols = ['MentalHealth', "BMI", 'PhysicalHealth', 'SleepTime']
 Scaler = StandardScaler()
-data_csv[num_cols] = Scaler.fit_transform(data_csv[num_cols])
+data_csv[num_cols] = Scaler.fit_transform(data_csv[num_cols]) """
 
 # correlations image
 figures = px.imshow(data_csv.corr(), color_continuous_scale="Blues")
 figures.update_layout(height=800)
 # if you like to see the color corr matrix
-# figures.show()
+figures.show()
 
 corr_matrix = data_csv.corr()
 corr_matrix["HeartDisease"].sort_values(ascending=False)
@@ -80,3 +81,5 @@ y_pred_6 = LR.predict(x_test)
 print(classification_report(y_test, y_pred_6))
 sns.set_context("poster")
 dispo = plot_confusion_matrix(LR, x_test, y_test, colorbar=False)
+
+pickle.dump(LR, open("data/logistic_regression.model", 'wb'))
